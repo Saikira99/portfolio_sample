@@ -5,31 +5,42 @@ import { eyebrowBoneNames, typingBoneNames } from "../../../data/boneData";
 const setAnimations = (gltf: GLTF) => {
   let character = gltf.scene;
   let mixer = new THREE.AnimationMixer(character);
+  let currentActions: THREE.AnimationAction[] = [];
+
   if (gltf.animations) {
     const introClip = gltf.animations.find(
       (clip) => clip.name === "introAnimation"
     );
-    const introAction = mixer.clipAction(introClip!);
-    introAction.setLoop(THREE.LoopOnce, 1);
-    introAction.clampWhenFinished = true;
-    introAction.play();
+    if (introClip) {
+      const introAction = mixer.clipAction(introClip);
+      introAction.setLoop(THREE.LoopOnce, 1);
+      introAction.clampWhenFinished = true;
+      introAction.play();
+      currentActions.push(introAction);
+    }
+
     const clipNames = ["key1", "key2", "key5", "key6"];
     clipNames.forEach((name) => {
       const clip = THREE.AnimationClip.findByName(gltf.animations, name);
       if (clip) {
         const action = mixer?.clipAction(clip);
-        action!.play();
-        action!.timeScale = 1.2;
-      } else {
-        console.error(`Animation "${name}" not found`);
+        if (action) {
+          action.play();
+          action.timeScale = 1.3;
+          action.weight = 0.8;
+          currentActions.push(action);
+        }
       }
     });
+
     let typingAction: THREE.AnimationAction | null = null;
     typingAction = createBoneAction(gltf, mixer, "typing", typingBoneNames);
     if (typingAction) {
       typingAction.enabled = true;
       typingAction.play();
-      typingAction.timeScale = 1.2;
+      typingAction.timeScale = 1.3;
+      typingAction.weight = 0.7;
+      currentActions.push(typingAction);
     }
   }
   function startIntro() {
