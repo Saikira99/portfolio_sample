@@ -3,17 +3,28 @@ import { RGBELoader } from "three-stdlib";
 import { gsap } from "gsap";
 
 const setLighting = (scene: THREE.Scene) => {
-  const directionalLight = new THREE.DirectionalLight(0xc7a9ff, 0);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0);
   directionalLight.intensity = 0;
-  directionalLight.position.set(-0.47, -0.32, -1);
+  directionalLight.position.set(0, 5, 8);
   directionalLight.castShadow = true;
-  directionalLight.shadow.mapSize.width = 1024;
-  directionalLight.shadow.mapSize.height = 1024;
+  directionalLight.shadow.mapSize.width = 2048;
+  directionalLight.shadow.mapSize.height = 2048;
   directionalLight.shadow.camera.near = 0.5;
   directionalLight.shadow.camera.far = 50;
+  directionalLight.shadow.bias = -0.001;
   scene.add(directionalLight);
 
-  const pointLight = new THREE.PointLight(0xc2a4ff, 0, 100, 3);
+  const fillLight = new THREE.DirectionalLight(0xc7a9ff, 0);
+  fillLight.intensity = 0;
+  fillLight.position.set(-3, 2, -5);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.DirectionalLight(0xffc9ff, 0);
+  rimLight.intensity = 0;
+  rimLight.position.set(0, 3, -8);
+  scene.add(rimLight);
+
+  const pointLight = new THREE.PointLight(0xc2a4ff, 0, 100, 2);
   pointLight.position.set(3, 12, 4);
   pointLight.castShadow = true;
   scene.add(pointLight);
@@ -38,14 +49,26 @@ const setLighting = (scene: THREE.Scene) => {
   const ease = "power2.inOut";
   function turnOnLights() {
     gsap.to(scene, {
-      environmentIntensity: 0.64,
+      environmentIntensity: 0.8,
       duration: duration,
       ease: ease,
     });
     gsap.to(directionalLight, {
-      intensity: 1,
+      intensity: 1.8,
       duration: duration,
       ease: ease,
+    });
+    gsap.to(fillLight, {
+      intensity: 0.6,
+      duration: duration,
+      ease: ease,
+      delay: 0.2,
+    });
+    gsap.to(rimLight, {
+      intensity: 0.5,
+      duration: duration,
+      ease: ease,
+      delay: 0.3,
     });
     gsap.to(".character-rim", {
       y: "55%",
